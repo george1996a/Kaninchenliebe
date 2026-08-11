@@ -1,0 +1,1269 @@
+<!DOCTYPE html>
+<html lang="de">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+    <title>Flappy Benji 🐰</title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html,
+        body {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+        }
+
+        body {
+            font-family: Georgia, "Times New Roman", serif;
+            background: #fff7ed;
+
+            display: flex;
+            justify-content: center;
+            align-items: center;
+
+            touch-action: none;
+            user-select: none;
+        }
+
+        /* ================================
+           SPIELBEREICH
+           ================================ */
+
+        #gameWrapper {
+            position: relative;
+
+            width: min(100vw, 500px);
+            height: min(100vh, 850px);
+
+            overflow: hidden;
+
+            background:
+                linear-gradient(
+                    to bottom,
+                    #dff4f4 0%,
+                    #f5eee1 75%,
+                    #cfe2b7 75%,
+                    #b8d69c 100%
+                );
+
+            box-shadow:
+                0 15px 50px rgba(80, 55, 45, 0.2);
+        }
+
+        canvas {
+            position: absolute;
+
+            width: 100%;
+            height: 100%;
+
+            left: 0;
+            top: 0;
+        }
+
+        /* ================================
+           HUD
+           ================================ */
+
+        #hud {
+            position: absolute;
+
+            top: 20px;
+            left: 0;
+
+            width: 100%;
+
+            display: flex;
+            justify-content: space-around;
+
+            z-index: 10;
+
+            pointer-events: none;
+        }
+
+        .scoreBox {
+            background: rgba(255, 255, 255, 0.82);
+
+            padding: 10px 18px;
+
+            border-radius: 20px;
+
+            text-align: center;
+
+            box-shadow:
+                0 5px 15px rgba(80, 55, 45, 0.12);
+        }
+
+        .scoreLabel {
+            font-size: 0.75rem;
+            color: #8a7468;
+        }
+
+        .scoreValue {
+            font-size: 1.5rem;
+            font-weight: bold;
+
+            color: #6b5147;
+        }
+
+        /* ================================
+           START / GAME OVER
+           ================================ */
+
+        #overlay {
+            position: absolute;
+
+            inset: 0;
+
+            z-index: 20;
+
+            display: flex;
+            justify-content: center;
+            align-items: center;
+
+            padding: 25px;
+
+            background: rgba(255, 250, 245, 0.72);
+
+            backdrop-filter: blur(4px);
+        }
+
+        #panel {
+            width: 100%;
+            max-width: 360px;
+
+            background: #fffdf9;
+
+            padding: 35px 25px;
+
+            border-radius: 30px;
+
+            text-align: center;
+
+            box-shadow:
+                0 20px 50px rgba(80, 55, 45, 0.18);
+        }
+
+        #panel h1 {
+            color: #6b5147;
+
+            font-size: clamp(2rem, 8vw, 3rem);
+
+            margin-bottom: 10px;
+        }
+
+        #panel p {
+            color: #806d64;
+
+            margin-bottom: 20px;
+        }
+
+        #finalScore {
+            font-size: 1.2rem;
+
+            color: #6b5147;
+
+            margin-bottom: 5px;
+        }
+
+        #bestScore {
+            color: #c27c7c;
+
+            font-weight: bold;
+
+            margin-bottom: 25px;
+        }
+
+        #gameButton {
+            border: none;
+
+            padding: 14px 30px;
+
+            border-radius: 50px;
+
+            background: #d58b8b;
+
+            color: white;
+
+            font-family: inherit;
+
+            font-size: 1.05rem;
+
+            cursor: pointer;
+
+            box-shadow:
+                0 8px 20px rgba(213, 139, 139, 0.3);
+
+            transition: 0.2s ease;
+        }
+
+        #gameButton:hover {
+            transform: translateY(-3px);
+
+            background: #c87878;
+        }
+
+        #hint {
+            margin-top: 18px;
+
+            font-size: 0.85rem;
+
+            color: #9b8980;
+        }
+
+        /* ================================
+           ZURÜCK BUTTON
+           ================================ */
+
+        #backButton {
+            position: absolute;
+
+            left: 15px;
+            bottom: 15px;
+
+            z-index: 15;
+
+            padding: 9px 15px;
+
+            border-radius: 20px;
+
+            background: rgba(255, 255, 255, 0.8);
+
+            color: #6b5147;
+
+            text-decoration: none;
+
+            font-size: 0.85rem;
+
+            box-shadow:
+                0 4px 12px rgba(80, 55, 45, 0.1);
+        }
+
+        /* ================================
+           MOBIL
+           ================================ */
+
+        @media (max-width: 600px) {
+
+            #gameWrapper {
+                width: 100vw;
+                height: 100vh;
+
+                box-shadow: none;
+            }
+
+            #hud {
+                top: 15px;
+            }
+
+            .scoreBox {
+                padding: 8px 14px;
+            }
+
+            #panel {
+                padding: 30px 20px;
+            }
+        }
+
+    </style>
+</head>
+
+
+<body>
+
+<div id="gameWrapper">
+
+    <canvas id="gameCanvas"></canvas>
+
+
+    <!-- SCORE -->
+
+    <div id="hud">
+
+        <div class="scoreBox">
+
+            <div class="scoreLabel">
+                PUNKTE
+            </div>
+
+            <div class="scoreValue" id="score">
+                0
+            </div>
+
+        </div>
+
+
+        <div class="scoreBox">
+
+            <div class="scoreLabel">
+                🏆 HIGHSCORE
+            </div>
+
+            <div class="scoreValue" id="highscore">
+                0
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- START / GAME OVER -->
+
+    <div id="overlay">
+
+        <div id="panel">
+
+            <h1>
+                🐰 Flappy Benji
+            </h1>
+
+            <p id="message">
+                Hilf Benji durch die Hindernisse! 🥕
+            </p>
+
+            <div id="finalScore">
+                Punkte: 0
+            </div>
+
+            <div id="bestScore">
+                🏆 Rekord: 0
+            </div>
+
+            <button id="gameButton">
+                Los geht's! 🐰
+            </button>
+
+            <div id="hint">
+                📱 Tippe zum Springen<br>
+                💻 Klick oder Leertaste
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <a id="backButton" href="index.html">
+        ← Zurück
+    </a>
+
+</div>
+
+
+<script>
+
+/* ==========================================
+   CANVAS
+   ========================================== */
+
+const canvas = document.getElementById("gameCanvas");
+const ctx = canvas.getContext("2d");
+
+const wrapper = document.getElementById("gameWrapper");
+
+const scoreElement = document.getElementById("score");
+const highscoreElement = document.getElementById("highscore");
+
+const overlay = document.getElementById("overlay");
+const gameButton = document.getElementById("gameButton");
+
+const message = document.getElementById("message");
+const finalScore = document.getElementById("finalScore");
+const bestScore = document.getElementById("bestScore");
+
+
+/* ==========================================
+   CANVAS GRÖSSE
+   ========================================== */
+
+function resizeCanvas() {
+
+    canvas.width = wrapper.clientWidth;
+    canvas.height = wrapper.clientHeight;
+
+}
+
+resizeCanvas();
+
+window.addEventListener("resize", resizeCanvas);
+
+
+/* ==========================================
+   BENJI BILD
+   ========================================== */
+
+const benjiImage = new Image();
+
+benjiImage.src = "./images/benji.png";
+
+
+/* ==========================================
+   HIGHScore
+   ========================================== */
+
+let highscore =
+    Number(localStorage.getItem("flappyBunnyHighscore")) || 0;
+
+highscoreElement.textContent = highscore;
+
+
+/* ==========================================
+   SPIELVARIABLEN
+   ========================================== */
+
+let gameRunning = false;
+
+let gameOver = false;
+
+let score = 0;
+
+let animationFrame;
+
+let lastTime = 0;
+
+
+/* ==========================================
+   BENJI
+   ========================================== */
+
+const bunny = {
+
+    x: 90,
+
+    y: 300,
+
+    width: 55,
+
+    height: 55,
+
+    velocity: 0,
+
+    gravity: 0.0018,
+
+    jumpPower: -0.55
+
+};
+
+
+/* ==========================================
+   HINDERNISSE
+   ========================================== */
+
+let pipes = [];
+
+let pipeTimer = 0;
+
+const pipeWidth = 70;
+
+const pipeGap = 190;
+
+const pipeSpeed = 0.18;
+
+
+/* ==========================================
+   SPIEL STARTEN
+   ========================================== */
+
+function startGame() {
+
+    gameRunning = true;
+
+    gameOver = false;
+
+    score = 0;
+
+    scoreElement.textContent = "0";
+
+    bunny.y = canvas.height / 2;
+
+    bunny.velocity = 0;
+
+    pipes = [];
+
+    pipeTimer = 0;
+
+    overlay.style.display = "none";
+
+    lastTime = performance.now();
+
+    animationFrame =
+        requestAnimationFrame(gameLoop);
+
+}
+
+
+/* ==========================================
+   SPRUNG
+   ========================================== */
+
+function jump() {
+
+    if (!gameRunning) {
+        return;
+    }
+
+    bunny.velocity = bunny.jumpPower;
+
+}
+
+
+/* ==========================================
+   NEUES HINDERNIS
+   ========================================== */
+
+function createPipe() {
+
+    const minTop = 80;
+
+    const maxTop =
+        canvas.height - pipeGap - 120;
+
+    const topHeight =
+        minTop +
+        Math.random() *
+        (maxTop - minTop);
+
+    pipes.push({
+
+        x: canvas.width,
+
+        top: topHeight,
+
+        bottom:
+            topHeight + pipeGap,
+
+        counted: false
+
+    });
+
+}
+
+
+/* ==========================================
+   KOLLISION
+   ========================================== */
+
+function collision(pipe) {
+
+    const padding = 8;
+
+    const bunnyLeft =
+        bunny.x + padding;
+
+    const bunnyRight =
+        bunny.x + bunny.width - padding;
+
+    const bunnyTop =
+        bunny.y + padding;
+
+    const bunnyBottom =
+        bunny.y + bunny.height - padding;
+
+
+    const pipeLeft = pipe.x;
+
+    const pipeRight =
+        pipe.x + pipeWidth;
+
+
+    const hitsPipe =
+        bunnyRight > pipeLeft &&
+        bunnyLeft < pipeRight &&
+        (
+            bunnyTop < pipe.top ||
+            bunnyBottom > pipe.bottom
+        );
+
+
+    return hitsPipe;
+
+}
+
+
+/* ==========================================
+   GAME OVER
+   ========================================== */
+
+function endGame() {
+
+    gameRunning = false;
+
+    gameOver = true;
+
+    cancelAnimationFrame(animationFrame);
+
+
+    let newRecord = false;
+
+
+    if (score > highscore) {
+
+        highscore = score;
+
+        localStorage.setItem(
+            "flappyBunnyHighscore",
+            highscore
+        );
+
+        newRecord = true;
+
+    }
+
+
+    highscoreElement.textContent =
+        highscore;
+
+
+    finalScore.textContent =
+        "Punkte: " + score;
+
+
+    bestScore.textContent =
+        "🏆 Rekord: " + highscore;
+
+
+    if (newRecord) {
+
+        message.textContent =
+            "✨ NEUER REKORD! ✨";
+
+    } else {
+
+        message.textContent =
+            "Benji braucht eine kleine Pause. 🐰";
+
+    }
+
+
+    gameButton.textContent =
+        "Nochmal spielen 🔄";
+
+
+    overlay.style.display =
+        "flex";
+
+}
+
+
+/* ==========================================
+   SPIEL LOOP
+   ========================================== */
+
+function gameLoop(timestamp) {
+
+    if (!gameRunning) {
+        return;
+    }
+
+
+    const delta =
+        timestamp - lastTime;
+
+    lastTime = timestamp;
+
+
+    update(delta);
+
+    draw();
+
+
+    animationFrame =
+        requestAnimationFrame(gameLoop);
+
+}
+
+
+/* ==========================================
+   UPDATE
+   ========================================== */
+
+function update(delta) {
+
+    /*
+       Benji fällt
+    */
+
+    bunny.velocity +=
+        bunny.gravity * delta;
+
+    bunny.y +=
+        bunny.velocity * delta;
+
+
+    /*
+       Oben / unten
+    */
+
+    if (bunny.y < 0) {
+
+        bunny.y = 0;
+
+        endGame();
+
+        return;
+
+    }
+
+
+    if (
+        bunny.y + bunny.height >
+        canvas.height - 60
+    ) {
+
+        endGame();
+
+        return;
+
+    }
+
+
+    /*
+       Hindernisse erzeugen
+    */
+
+    pipeTimer += delta;
+
+
+    if (pipeTimer > 1500) {
+
+        createPipe();
+
+        pipeTimer = 0;
+
+    }
+
+
+    /*
+       Hindernisse bewegen
+    */
+
+    for (let i = pipes.length - 1; i >= 0; i--) {
+
+        const pipe = pipes[i];
+
+        pipe.x -=
+            pipeSpeed * delta;
+
+
+        /*
+           Punkte
+        */
+
+        if (
+            !pipe.counted &&
+            pipe.x + pipeWidth < bunny.x
+        ) {
+
+            pipe.counted = true;
+
+            score++;
+
+            scoreElement.textContent =
+                score;
+
+        }
+
+
+        /*
+           Kollision
+        */
+
+        if (collision(pipe)) {
+
+            endGame();
+
+            return;
+
+        }
+
+
+        /*
+           Hindernis löschen
+        */
+
+        if (
+            pipe.x + pipeWidth < 0
+        ) {
+
+            pipes.splice(i, 1);
+
+        }
+
+    }
+
+}
+
+
+/* ==========================================
+   ZEICHNEN
+   ========================================== */
+
+function draw() {
+
+    ctx.clearRect(
+        0,
+        0,
+        canvas.width,
+        canvas.height
+    );
+
+
+    drawBackground();
+
+    drawPipes();
+
+    drawGround();
+
+    drawBunny();
+
+}
+
+
+/* ==========================================
+   HINTERGRUND
+   ========================================== */
+
+function drawBackground() {
+
+    /*
+       Himmel
+    */
+
+    const gradient =
+        ctx.createLinearGradient(
+            0,
+            0,
+            0,
+            canvas.height
+        );
+
+    gradient.addColorStop(
+        0,
+        "#dff4f4"
+    );
+
+    gradient.addColorStop(
+        0.75,
+        "#f5eee1"
+    );
+
+    gradient.addColorStop(
+        1,
+        "#cfe2b7"
+    );
+
+
+    ctx.fillStyle = gradient;
+
+    ctx.fillRect(
+        0,
+        0,
+        canvas.width,
+        canvas.height
+    );
+
+
+    /*
+       Wolken
+    */
+
+    ctx.fillStyle =
+        "rgba(255,255,255,0.65)";
+
+
+    drawCloud(
+        canvas.width * 0.2,
+        100,
+        1
+    );
+
+    drawCloud(
+        canvas.width * 0.7,
+        190,
+        0.8
+    );
+
+}
+
+
+/* ==========================================
+   WOLKE
+   ========================================== */
+
+function drawCloud(x, y, scale) {
+
+    ctx.beginPath();
+
+    ctx.arc(
+        x,
+        y,
+        25 * scale,
+        0,
+        Math.PI * 2
+    );
+
+    ctx.arc(
+        x + 25 * scale,
+        y - 10 * scale,
+        32 * scale,
+        0,
+        Math.PI * 2
+    );
+
+    ctx.arc(
+        x + 55 * scale,
+        y,
+        25 * scale,
+        0,
+        Math.PI * 2
+    );
+
+    ctx.fill();
+
+}
+
+
+/* ==========================================
+   HINDERNISSE ZEICHNEN
+   ========================================== */
+
+function drawPipes() {
+
+    pipes.forEach(pipe => {
+
+        /*
+           obere Karotte / Pflanze
+        */
+
+        drawObstacle(
+            pipe.x,
+            0,
+            pipeWidth,
+            pipe.top
+        );
+
+
+        /*
+           untere Karotte / Pflanze
+        */
+
+        drawObstacle(
+            pipe.x,
+            pipe.bottom,
+            pipeWidth,
+            canvas.height - pipe.bottom - 60
+        );
+
+    });
+
+}
+
+
+/* ==========================================
+   HINDERNIS
+   ========================================== */
+
+function drawObstacle(
+    x,
+    y,
+    width,
+    height
+) {
+
+    if (height <= 0) {
+        return;
+    }
+
+
+    /*
+       Hauptkörper
+    */
+
+    ctx.fillStyle = "#91b879";
+
+    ctx.fillRect(
+        x,
+        y,
+        width,
+        height
+    );
+
+
+    /*
+       Rand
+    */
+
+    ctx.fillStyle = "#739b62";
+
+    ctx.fillRect(
+        x,
+        y,
+        8,
+        height
+    );
+
+    ctx.fillRect(
+        x + width - 8,
+        y,
+        8,
+        height
+    );
+
+
+    /*
+       Blätter / kleine Details
+    */
+
+    ctx.fillStyle = "#668e57";
+
+    for (
+        let i = 20;
+        i < height;
+        i += 35
+    ) {
+
+        ctx.beginPath();
+
+        ctx.arc(
+            x + width / 2,
+            y + i,
+            5,
+            0,
+            Math.PI * 2
+        );
+
+        ctx.fill();
+
+    }
+
+}
+
+
+/* ==========================================
+   BODEN
+   ========================================== */
+
+function drawGround() {
+
+    const groundHeight = 60;
+
+
+    ctx.fillStyle =
+        "#b8d69c";
+
+
+    ctx.fillRect(
+        0,
+        canvas.height - groundHeight,
+        canvas.width,
+        groundHeight
+    );
+
+
+    /*
+       kleine Grashalme
+    */
+
+    ctx.strokeStyle =
+        "#7ea86b";
+
+    ctx.lineWidth = 2;
+
+
+    for (
+        let x = 0;
+        x < canvas.width;
+        x += 18
+    ) {
+
+        ctx.beginPath();
+
+        ctx.moveTo(
+            x,
+            canvas.height - groundHeight
+        );
+
+        ctx.lineTo(
+            x + 5,
+            canvas.height - groundHeight - 7
+        );
+
+        ctx.stroke();
+
+    }
+
+}
+
+
+/* ==========================================
+   BENJI ZEICHNEN
+   ========================================== */
+
+function drawBunny() {
+
+    if (
+        benjiImage.complete &&
+        benjiImage.naturalWidth > 0
+    ) {
+
+        ctx.save();
+
+
+        /*
+           leichte Drehung während des Fallens
+        */
+
+        const rotation =
+            Math.max(
+                -0.25,
+                Math.min(
+                    0.5,
+                    bunny.velocity * 0.5
+                )
+            );
+
+
+        ctx.translate(
+            bunny.x + bunny.width / 2,
+            bunny.y + bunny.height / 2
+        );
+
+        ctx.rotate(rotation);
+
+
+        ctx.drawImage(
+            benjiImage,
+            -bunny.width / 2,
+            -bunny.height / 2,
+            bunny.width,
+            bunny.height
+        );
+
+
+        ctx.restore();
+
+    } else {
+
+        /*
+           Falls das Bild noch lädt:
+           vorübergehend ein Häschen anzeigen
+        */
+
+        ctx.font = "45px serif";
+
+        ctx.fillText(
+            "🐰",
+            bunny.x,
+            bunny.y + 45
+        );
+
+    }
+
+}
+
+
+/* ==========================================
+   STEUERUNG
+   ========================================== */
+
+
+/*
+   Maus
+*/
+
+canvas.addEventListener(
+    "mousedown",
+    function(event) {
+
+        event.preventDefault();
+
+        jump();
+
+    }
+);
+
+
+/*
+   Smartphone / Touch
+*/
+
+canvas.addEventListener(
+    "touchstart",
+    function(event) {
+
+        event.preventDefault();
+
+        jump();
+
+    },
+    {
+        passive: false
+    }
+);
+
+
+/*
+   Tastatur
+*/
+
+document.addEventListener(
+    "keydown",
+    function(event) {
+
+        if (
+            event.code === "Space" ||
+            event.code === "ArrowUp"
+        ) {
+
+            event.preventDefault();
+
+            jump();
+
+        }
+
+    }
+);
+
+
+/*
+   Button
+*/
+
+gameButton.addEventListener(
+    "click",
+    function() {
+
+        startGame();
+
+    }
+);
+
+
+/* ==========================================
+   START
+   ========================================== */
+
+message.textContent =
+    "Hilf Benji durch die Hindernisse! 🥕";
+
+finalScore.textContent =
+    "Punkte: 0";
+
+bestScore.textContent =
+    "🏆 Rekord: " + highscore;
+
+</script>
+
+</body>
+</html>
