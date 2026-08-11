@@ -4,8 +4,10 @@
 <head>
     <meta charset="UTF-8">
 
-    <meta name="viewport"
-          content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover"
+    >
 
     <title>Flappy Benji 🐰</title>
 
@@ -26,101 +28,188 @@
 
         body {
             font-family: Georgia, "Times New Roman", serif;
-            background: #fff7ed;
+
+            background: #f5e9dc;
 
             display: flex;
             justify-content: center;
             align-items: center;
 
             touch-action: none;
+            overscroll-behavior: none;
             user-select: none;
+            -webkit-user-select: none;
+
+            padding:
+                env(safe-area-inset-top)
+                env(safe-area-inset-right)
+                env(safe-area-inset-bottom)
+                env(safe-area-inset-left);
         }
 
-        /* ================================
-           SPIELBEREICH
-           ================================ */
+
+        /* =====================================
+           SPIEL
+           ===================================== */
 
         #gameWrapper {
+
             position: relative;
 
-            width: min(100vw, 500px);
-            height: min(100vh, 850px);
+            width: min(100vw, 520px);
+
+            height: min(100dvh, 900px);
 
             overflow: hidden;
 
-            background:
-                linear-gradient(
-                    to bottom,
-                    #dff4f4 0%,
-                    #f5eee1 75%,
-                    #cfe2b7 75%,
-                    #b8d69c 100%
-                );
+            background: #dff3f5;
 
             box-shadow:
-                0 15px 50px rgba(80, 55, 45, 0.2);
+                0 20px 60px rgba(80, 55, 45, 0.20);
+
+            border-radius: 0;
         }
 
+
         canvas {
+
             position: absolute;
+
+            inset: 0;
 
             width: 100%;
             height: 100%;
 
-            left: 0;
-            top: 0;
+            display: block;
         }
 
-        /* ================================
+
+        /* =====================================
            HUD
-           ================================ */
+           ===================================== */
 
         #hud {
+
             position: absolute;
 
-            top: 20px;
+            top: max(18px, env(safe-area-inset-top));
+
             left: 0;
-
-            width: 100%;
-
-            display: flex;
-            justify-content: space-around;
+            right: 0;
 
             z-index: 10;
+
+            display: flex;
+
+            justify-content: center;
+
+            align-items: center;
+
+            gap: 12px;
 
             pointer-events: none;
         }
 
+
         .scoreBox {
-            background: rgba(255, 255, 255, 0.82);
 
-            padding: 10px 18px;
+            min-width: 115px;
 
-            border-radius: 20px;
+            padding: 9px 16px 10px;
+
+            background:
+                rgba(255, 253, 249, 0.88);
+
+            border: 1px solid rgba(255,255,255,0.8);
+
+            border-radius: 18px;
 
             text-align: center;
 
             box-shadow:
-                0 5px 15px rgba(80, 55, 45, 0.12);
+                0 7px 22px rgba(91, 65, 54, 0.13);
+
+            backdrop-filter: blur(8px);
         }
+
 
         .scoreLabel {
-            font-size: 0.75rem;
-            color: #8a7468;
+
+            font-family:
+                Arial,
+                sans-serif;
+
+            font-size: 10px;
+
+            letter-spacing: 1.4px;
+
+            color: #927b70;
+
+            font-weight: 700;
         }
+
 
         .scoreValue {
-            font-size: 1.5rem;
-            font-weight: bold;
 
-            color: #6b5147;
+            margin-top: 1px;
+
+            font-family:
+                Arial,
+                sans-serif;
+
+            font-size: 23px;
+
+            line-height: 1.1;
+
+            color: #654d43;
+
+            font-weight: 800;
         }
 
-        /* ================================
+
+        /* =====================================
+           ZURÜCK
+           ===================================== */
+
+        #backButton {
+
+            position: absolute;
+
+            left: 15px;
+
+            bottom:
+                max(15px, env(safe-area-inset-bottom));
+
+            z-index: 12;
+
+            padding: 8px 14px;
+
+            border-radius: 20px;
+
+            background:
+                rgba(255, 253, 249, 0.82);
+
+            color: #735c51;
+
+            text-decoration: none;
+
+            font-family: Arial, sans-serif;
+
+            font-size: 12px;
+
+            box-shadow:
+                0 5px 15px rgba(80, 55, 45, 0.10);
+
+            backdrop-filter: blur(6px);
+        }
+
+
+        /* =====================================
            START / GAME OVER
-           ================================ */
+           ===================================== */
 
         #overlay {
+
             position: absolute;
 
             inset: 0;
@@ -128,150 +217,159 @@
             z-index: 20;
 
             display: flex;
+
             justify-content: center;
+
             align-items: center;
 
             padding: 25px;
 
-            background: rgba(255, 250, 245, 0.72);
+            background:
+                rgba(250, 245, 238, 0.66);
 
-            backdrop-filter: blur(4px);
+            backdrop-filter: blur(7px);
         }
 
+
         #panel {
-            width: 100%;
-            max-width: 360px;
 
-            background: #fffdf9;
+            width: min(88vw, 360px);
 
-            padding: 35px 25px;
+            padding: 30px 24px 26px;
+
+            background:
+                rgba(255, 253, 249, 0.96);
 
             border-radius: 30px;
 
             text-align: center;
 
             box-shadow:
-                0 20px 50px rgba(80, 55, 45, 0.18);
+                0 20px 55px rgba(80, 55, 45, 0.20);
         }
+
 
         #panel h1 {
-            color: #6b5147;
 
-            font-size: clamp(2rem, 8vw, 3rem);
+            color: #674f45;
 
-            margin-bottom: 10px;
+            font-size:
+                clamp(2rem, 9vw, 3rem);
+
+            margin-bottom: 8px;
         }
 
-        #panel p {
-            color: #806d64;
 
-            margin-bottom: 20px;
+        #message {
+
+            color: #806d63;
+
+            font-size: 15px;
+
+            line-height: 1.5;
+
+            margin-bottom: 18px;
         }
+
 
         #finalScore {
-            font-size: 1.2rem;
 
             color: #6b5147;
+
+            font-size: 17px;
+
+            font-weight: bold;
 
             margin-bottom: 5px;
         }
 
+
         #bestScore {
-            color: #c27c7c;
+
+            color: #c27676;
+
+            font-size: 15px;
 
             font-weight: bold;
 
-            margin-bottom: 25px;
+            margin-bottom: 22px;
         }
 
+
         #gameButton {
+
             border: none;
 
-            padding: 14px 30px;
+            padding: 13px 28px;
 
             border-radius: 50px;
 
-            background: #d58b8b;
+            background: #d58787;
 
             color: white;
 
-            font-family: inherit;
+            font-family: Georgia, serif;
 
-            font-size: 1.05rem;
+            font-size: 16px;
+
+            font-weight: bold;
 
             cursor: pointer;
 
             box-shadow:
-                0 8px 20px rgba(213, 139, 139, 0.3);
+                0 8px 22px rgba(213, 135, 135, 0.30);
 
-            transition: 0.2s ease;
+            -webkit-tap-highlight-color: transparent;
         }
 
-        #gameButton:hover {
-            transform: translateY(-3px);
-
-            background: #c87878;
-        }
 
         #hint {
-            margin-top: 18px;
 
-            font-size: 0.85rem;
+            margin-top: 15px;
 
-            color: #9b8980;
+            color: #9a8980;
+
+            font-family: Arial, sans-serif;
+
+            font-size: 12px;
+
+            line-height: 1.6;
         }
 
-        /* ================================
-           ZURÜCK BUTTON
-           ================================ */
 
-        #backButton {
-            position: absolute;
+        /* =====================================
+           KLEINE HANDYS
+           ===================================== */
 
-            left: 15px;
-            bottom: 15px;
-
-            z-index: 15;
-
-            padding: 9px 15px;
-
-            border-radius: 20px;
-
-            background: rgba(255, 255, 255, 0.8);
-
-            color: #6b5147;
-
-            text-decoration: none;
-
-            font-size: 0.85rem;
-
-            box-shadow:
-                0 4px 12px rgba(80, 55, 45, 0.1);
-        }
-
-        /* ================================
-           MOBIL
-           ================================ */
-
-        @media (max-width: 600px) {
-
-            #gameWrapper {
-                width: 100vw;
-                height: 100vh;
-
-                box-shadow: none;
-            }
+        @media (max-height: 700px) {
 
             #hud {
-                top: 15px;
+                top: 10px;
             }
 
             .scoreBox {
-                padding: 8px 14px;
+                padding: 7px 13px;
+                min-width: 105px;
+            }
+
+            .scoreValue {
+                font-size: 20px;
             }
 
             #panel {
-                padding: 30px 20px;
+                padding: 22px 20px;
+            }
+
+            #panel h1 {
+                font-size: 2rem;
+            }
+        }
+
+
+        @media (min-width: 521px) {
+
+            #gameWrapper {
+                border-radius: 28px;
             }
         }
 
@@ -286,7 +384,9 @@
     <canvas id="gameCanvas"></canvas>
 
 
-    <!-- SCORE -->
+    <!-- ================================
+         PUNKTE
+         ================================ -->
 
     <div id="hud">
 
@@ -296,7 +396,10 @@
                 PUNKTE
             </div>
 
-            <div class="scoreValue" id="score">
+            <div
+                class="scoreValue"
+                id="score"
+            >
                 0
             </div>
 
@@ -309,7 +412,10 @@
                 🏆 HIGHSCORE
             </div>
 
-            <div class="scoreValue" id="highscore">
+            <div
+                class="scoreValue"
+                id="highscore"
+            >
                 0
             </div>
 
@@ -318,7 +424,9 @@
     </div>
 
 
-    <!-- START / GAME OVER -->
+    <!-- ================================
+         START / GAME OVER
+         ================================ -->
 
     <div id="overlay">
 
@@ -329,7 +437,7 @@
             </h1>
 
             <p id="message">
-                Hilf Benji durch die Hindernisse! 🥕
+                Hilf Benji, alle Möhrchen zu erwischen! 🥕
             </p>
 
             <div id="finalScore">
@@ -337,7 +445,7 @@
             </div>
 
             <div id="bestScore">
-                🏆 Rekord: 0
+                🏆 Highscore: 0
             </div>
 
             <button id="gameButton">
@@ -354,7 +462,10 @@
     </div>
 
 
-    <a id="backButton" href="index.html">
+    <a
+        id="backButton"
+        href="index.html"
+    >
         ← Zurück
     </a>
 
@@ -364,23 +475,110 @@
 <script>
 
 /* ==========================================
-   CANVAS
+   ELEMENTE
    ========================================== */
 
-const canvas = document.getElementById("gameCanvas");
-const ctx = canvas.getContext("2d");
+const canvas =
+    document.getElementById("gameCanvas");
 
-const wrapper = document.getElementById("gameWrapper");
+const ctx =
+    canvas.getContext("2d");
 
-const scoreElement = document.getElementById("score");
-const highscoreElement = document.getElementById("highscore");
+const wrapper =
+    document.getElementById("gameWrapper");
 
-const overlay = document.getElementById("overlay");
-const gameButton = document.getElementById("gameButton");
+const scoreElement =
+    document.getElementById("score");
 
-const message = document.getElementById("message");
-const finalScore = document.getElementById("finalScore");
-const bestScore = document.getElementById("bestScore");
+const highscoreElement =
+    document.getElementById("highscore");
+
+const overlay =
+    document.getElementById("overlay");
+
+const gameButton =
+    document.getElementById("gameButton");
+
+const message =
+    document.getElementById("message");
+
+const finalScore =
+    document.getElementById("finalScore");
+
+const bestScore =
+    document.getElementById("bestScore");
+
+
+/* ==========================================
+   BENJI
+   ========================================== */
+
+const benjiImage =
+    new Image();
+
+benjiImage.src =
+    "images/benji.png";
+
+
+/* ==========================================
+   HIGHScore
+   ========================================== */
+
+let highscore =
+    Number(
+        localStorage.getItem(
+            "flappyBunnyHighscore"
+        )
+    ) || 0;
+
+highscoreElement.textContent =
+    highscore;
+
+
+/* ==========================================
+   SPIEL
+   ========================================== */
+
+let gameRunning = false;
+
+let score = 0;
+
+let lastTime = 0;
+
+let animationFrame;
+
+let carrotTimer = 0;
+
+let obstacleTimer = 0;
+
+let carrots = [];
+
+let obstacles = [];
+
+let particles = [];
+
+
+/* ==========================================
+   BENJI WERTE
+   ========================================== */
+
+const bunny = {
+
+    x: 0,
+
+    y: 0,
+
+    width: 76,
+
+    height: 76,
+
+    velocity: 0,
+
+    gravity: 0.00165,
+
+    jumpPower: -0.53
+
+};
 
 
 /* ==========================================
@@ -389,122 +587,73 @@ const bestScore = document.getElementById("bestScore");
 
 function resizeCanvas() {
 
-    canvas.width = wrapper.clientWidth;
-    canvas.height = wrapper.clientHeight;
+    canvas.width =
+        wrapper.clientWidth;
+
+    canvas.height =
+        wrapper.clientHeight;
+
+
+    bunny.x =
+        canvas.width * 0.20;
 
 }
 
 resizeCanvas();
 
-window.addEventListener("resize", resizeCanvas);
+
+window.addEventListener(
+    "resize",
+    resizeCanvas
+);
 
 
 /* ==========================================
-   BENJI BILD
-   ========================================== */
-
-const benjiImage = new Image();
-
-benjiImage.src = "./images/benjigame2.png";
-
-
-/* ==========================================
-   HIGHScore
-   ========================================== */
-
-let highscore =
-    Number(localStorage.getItem("flappyBunnyHighscore")) || 0;
-
-highscoreElement.textContent = highscore;
-
-
-/* ==========================================
-   SPIELVARIABLEN
-   ========================================== */
-
-let gameRunning = false;
-
-let gameOver = false;
-
-let score = 0;
-
-let animationFrame;
-
-let lastTime = 0;
-
-
-/* ==========================================
-   BENJI
-   ========================================== */
-
-const bunny = {
-
-    x: 90,
-
-    y: 300,
-
-    width: 55,
-
-    height: 55,
-
-    velocity: 0,
-
-    gravity: 0.0018,
-
-    jumpPower: -0.55
-
-};
-
-
-/* ==========================================
-   HINDERNISSE
-   ========================================== */
-
-let pipes = [];
-
-let pipeTimer = 0;
-
-const pipeWidth = 70;
-
-const pipeGap = 190;
-
-const pipeSpeed = 0.18;
-
-
-/* ==========================================
-   SPIEL STARTEN
+   SPIEL START
    ========================================== */
 
 function startGame() {
 
     gameRunning = true;
 
-    gameOver = false;
-
     score = 0;
 
-    scoreElement.textContent = "0";
+    carrots = [];
 
-    bunny.y = canvas.height / 2;
+    obstacles = [];
+
+    particles = [];
+
+    carrotTimer = 0;
+
+    obstacleTimer = 0;
+
+    bunny.x =
+        canvas.width * 0.20;
+
+    bunny.y =
+        canvas.height * 0.45;
 
     bunny.velocity = 0;
 
-    pipes = [];
+    scoreElement.textContent =
+        "0";
 
-    pipeTimer = 0;
+    overlay.style.display =
+        "none";
 
-    overlay.style.display = "none";
-
-    lastTime = performance.now();
+    lastTime =
+        performance.now();
 
     animationFrame =
-        requestAnimationFrame(gameLoop);
-
+        requestAnimationFrame(
+            gameLoop
+        );
 }
 
 
 /* ==========================================
-   SPRUNG
+   SPRINGEN
    ========================================== */
 
 function jump() {
@@ -513,37 +662,42 @@ function jump() {
         return;
     }
 
-    bunny.velocity = bunny.jumpPower;
+    bunny.velocity =
+        bunny.jumpPower;
 
 }
 
 
 /* ==========================================
-   NEUES HINDERNIS
+   KAROTTE ERSTELLEN
    ========================================== */
 
-function createPipe() {
+function createCarrot() {
 
-    const minTop = 80;
+    const margin = 100;
 
-    const maxTop =
-        canvas.height - pipeGap - 120;
+    const minY = 100;
 
-    const topHeight =
-        minTop +
-        Math.random() *
-        (maxTop - minTop);
+    const maxY =
+        canvas.height - margin;
 
-    pipes.push({
+    carrots.push({
 
-        x: canvas.width,
+        x:
+            canvas.width + 40,
 
-        top: topHeight,
+        y:
+            minY +
+            Math.random() *
+            (maxY - minY),
 
-        bottom:
-            topHeight + pipeGap,
+        size:
+            34,
 
-        counted: false
+        rotation:
+            (Math.random() - 0.5) * 0.3,
+
+        collected: false
 
     });
 
@@ -551,42 +705,155 @@ function createPipe() {
 
 
 /* ==========================================
-   KOLLISION
+   HINDERNISSE
    ========================================== */
 
-function collision(pipe) {
+function createObstacle() {
 
-    const padding = 8;
+    const gap = 190;
 
-    const bunnyLeft =
-        bunny.x + padding;
+    const minTop = 80;
 
-    const bunnyRight =
-        bunny.x + bunny.width - padding;
+    const maxTop =
+        canvas.height -
+        gap -
+        120;
 
-    const bunnyTop =
-        bunny.y + padding;
+    const top =
+        minTop +
+        Math.random() *
+        (maxTop - minTop);
 
-    const bunnyBottom =
-        bunny.y + bunny.height - padding;
+    obstacles.push({
+
+        x:
+            canvas.width + 50,
+
+        width:
+            72,
+
+        top:
+            top,
+
+        bottom:
+            top + gap
+
+    });
+
+}
 
 
-    const pipeLeft = pipe.x;
+/* ==========================================
+   KOLLISION BENJI / KAROTTE
+   ========================================== */
 
-    const pipeRight =
-        pipe.x + pipeWidth;
+function carrotCollision(carrot) {
 
+    const bx =
+        bunny.x + bunny.width / 2;
 
-    const hitsPipe =
-        bunnyRight > pipeLeft &&
-        bunnyLeft < pipeRight &&
-        (
-            bunnyTop < pipe.top ||
-            bunnyBottom > pipe.bottom
+    const by =
+        bunny.y + bunny.height / 2;
+
+    const cx =
+        carrot.x;
+
+    const cy =
+        carrot.y;
+
+    const distance =
+        Math.hypot(
+            bx - cx,
+            by - cy
         );
 
+    return distance <
+        45;
 
-    return hitsPipe;
+}
+
+
+/* ==========================================
+   KOLLISION HINDERNIS
+   ========================================== */
+
+function obstacleCollision(obstacle) {
+
+    const padding = 10;
+
+    const left =
+        bunny.x + padding;
+
+    const right =
+        bunny.x +
+        bunny.width -
+        padding;
+
+    const top =
+        bunny.y + padding;
+
+    const bottom =
+        bunny.y +
+        bunny.height -
+        padding;
+
+
+    return (
+
+        right > obstacle.x &&
+
+        left <
+            obstacle.x +
+            obstacle.width &&
+
+        (
+            top < obstacle.top ||
+            bottom > obstacle.bottom
+        )
+
+    );
+
+}
+
+
+/* ==========================================
+   PARTIKEL
+   ========================================== */
+
+function createParticles(
+    x,
+    y
+) {
+
+    for (
+        let i = 0;
+        i < 10;
+        i++
+    ) {
+
+        particles.push({
+
+            x: x,
+
+            y: y,
+
+            vx:
+                (Math.random() - 0.5)
+                * 0.15,
+
+            vy:
+                (Math.random() - 0.5)
+                * 0.15,
+
+            life: 1,
+
+            size:
+                3 +
+                Math.random() * 4
+
+        });
+
+    }
 
 }
 
@@ -599,9 +866,9 @@ function endGame() {
 
     gameRunning = false;
 
-    gameOver = true;
-
-    cancelAnimationFrame(animationFrame);
+    cancelAnimationFrame(
+        animationFrame
+    );
 
 
     let newRecord = false;
@@ -609,7 +876,8 @@ function endGame() {
 
     if (score > highscore) {
 
-        highscore = score;
+        highscore =
+            score;
 
         localStorage.setItem(
             "flappyBunnyHighscore",
@@ -630,18 +898,18 @@ function endGame() {
 
 
     bestScore.textContent =
-        "🏆 Rekord: " + highscore;
+        "🏆 Highscore: " + highscore;
 
 
-    if (newRecord) {
+    if (newRecord && score > 0) {
 
         message.textContent =
-            "✨ NEUER REKORD! ✨";
+            "✨ NEUER REKORD! Benji ist stolz! ✨";
 
     } else {
 
         message.textContent =
-            "Benji braucht eine kleine Pause. 🐰";
+            "Benji braucht kurz eine Möhrchenpause. 🐰";
 
     }
 
@@ -657,7 +925,7 @@ function endGame() {
 
 
 /* ==========================================
-   SPIEL LOOP
+   GAME LOOP
    ========================================== */
 
 function gameLoop(timestamp) {
@@ -668,9 +936,13 @@ function gameLoop(timestamp) {
 
 
     const delta =
-        timestamp - lastTime;
+        Math.min(
+            timestamp - lastTime,
+            30
+        );
 
-    lastTime = timestamp;
+    lastTime =
+        timestamp;
 
 
     update(delta);
@@ -679,7 +951,9 @@ function gameLoop(timestamp) {
 
 
     animationFrame =
-        requestAnimationFrame(gameLoop);
+        requestAnimationFrame(
+            gameLoop
+        );
 
 }
 
@@ -690,9 +964,7 @@ function gameLoop(timestamp) {
 
 function update(delta) {
 
-    /*
-       Benji fällt
-    */
+    /* BENJI */
 
     bunny.velocity +=
         bunny.gravity * delta;
@@ -701,24 +973,16 @@ function update(delta) {
         bunny.velocity * delta;
 
 
-    /*
-       Oben / unten
-    */
+    /* BODEN */
 
-    if (bunny.y < 0) {
-
-        bunny.y = 0;
-
-        endGame();
-
-        return;
-
-    }
+    const ground =
+        canvas.height - 65;
 
 
     if (
-        bunny.y + bunny.height >
-        canvas.height - 60
+        bunny.y +
+        bunny.height >
+        ground
     ) {
 
         endGame();
@@ -728,79 +992,136 @@ function update(delta) {
     }
 
 
-    /*
-       Hindernisse erzeugen
-    */
+    /* DECKE */
 
-    pipeTimer += delta;
+    if (bunny.y < 0) {
 
+        bunny.y = 0;
 
-    if (pipeTimer > 1500) {
-
-        createPipe();
-
-        pipeTimer = 0;
+        bunny.velocity = 0;
 
     }
 
 
-    /*
-       Hindernisse bewegen
-    */
+    /* KAROTTEN */
 
-    for (let i = pipes.length - 1; i >= 0; i--) {
-
-        const pipe = pipes[i];
-
-        pipe.x -=
-            pipeSpeed * delta;
+    carrotTimer += delta;
 
 
-        /*
-           Punkte
-        */
+    if (carrotTimer > 1150) {
 
-        if (
-            !pipe.counted &&
-            pipe.x + pipeWidth < bunny.x
-        ) {
+        createCarrot();
 
-            pipe.counted = true;
-
-            score++;
-
-            scoreElement.textContent =
-                score;
-
-        }
-
-
-        /*
-           Kollision
-        */
-
-        if (collision(pipe)) {
-
-            endGame();
-
-            return;
-
-        }
-
-
-        /*
-           Hindernis löschen
-        */
-
-        if (
-            pipe.x + pipeWidth < 0
-        ) {
-
-            pipes.splice(i, 1);
-
-        }
+        carrotTimer = 0;
 
     }
+
+
+    carrots.forEach(
+        carrot => {
+
+            carrot.x -=
+                0.19 * delta;
+
+
+            if (
+                !carrot.collected &&
+                carrotCollision(carrot)
+            ) {
+
+                carrot.collected =
+                    true;
+
+                score++;
+
+                scoreElement.textContent =
+                    score;
+
+                createParticles(
+                    carrot.x,
+                    carrot.y
+                );
+
+            }
+
+        }
+    );
+
+
+    carrots =
+        carrots.filter(
+            carrot =>
+                carrot.x > -60 &&
+                !carrot.collected
+        );
+
+
+    /* HINDERNISSE */
+
+    obstacleTimer += delta;
+
+
+    if (obstacleTimer > 1900) {
+
+        createObstacle();
+
+        obstacleTimer = 0;
+
+    }
+
+
+    obstacles.forEach(
+        obstacle => {
+
+            obstacle.x -=
+                0.18 * delta;
+
+
+            if (
+                obstacleCollision(
+                    obstacle
+                )
+            ) {
+
+                endGame();
+
+            }
+
+        }
+    );
+
+
+    obstacles =
+        obstacles.filter(
+            obstacle =>
+                obstacle.x >
+                -obstacle.width
+        );
+
+
+    /* PARTIKEL */
+
+    particles.forEach(
+        particle => {
+
+            particle.x +=
+                particle.vx * delta;
+
+            particle.y +=
+                particle.vy * delta;
+
+            particle.life -=
+                0.002 * delta;
+
+        }
+    );
+
+
+    particles =
+        particles.filter(
+            particle =>
+                particle.life > 0
+        );
 
 }
 
@@ -821,11 +1142,17 @@ function draw() {
 
     drawBackground();
 
-    drawPipes();
+    drawObstacles();
 
-    drawGround();
+    drawCarrots();
+
+    drawParticles();
+
+    drawAirTrail();
 
     drawBunny();
+
+    drawGround();
 
 }
 
@@ -836,10 +1163,6 @@ function draw() {
 
 function drawBackground() {
 
-    /*
-       Himmel
-    */
-
     const gradient =
         ctx.createLinearGradient(
             0,
@@ -848,23 +1171,30 @@ function drawBackground() {
             canvas.height
         );
 
+
     gradient.addColorStop(
         0,
-        "#dff4f4"
+        "#b9e6f1"
     );
 
     gradient.addColorStop(
-        0.75,
-        "#f5eee1"
+        0.52,
+        "#e9f5ec"
+    );
+
+    gradient.addColorStop(
+        0.76,
+        "#d9e8bd"
     );
 
     gradient.addColorStop(
         1,
-        "#cfe2b7"
+        "#a8cf8c"
     );
 
 
-    ctx.fillStyle = gradient;
+    ctx.fillStyle =
+        gradient;
 
     ctx.fillRect(
         0,
@@ -874,25 +1204,78 @@ function drawBackground() {
     );
 
 
-    /*
-       Wolken
-    */
+    /* SONNE */
 
     ctx.fillStyle =
-        "rgba(255,255,255,0.65)";
+        "rgba(255,235,168,0.9)";
 
+    ctx.beginPath();
+
+    ctx.arc(
+        canvas.width * 0.82,
+        105,
+        40,
+        0,
+        Math.PI * 2
+    );
+
+    ctx.fill();
+
+
+    /* WOLKEN */
 
     drawCloud(
-        canvas.width * 0.2,
-        100,
-        1
+        canvas.width * 0.20,
+        120,
+        0.9
     );
 
     drawCloud(
-        canvas.width * 0.7,
-        190,
-        0.8
+        canvas.width * 0.72,
+        205,
+        0.65
     );
+
+
+    /* HÜGEL */
+
+    ctx.fillStyle =
+        "#bdd99f";
+
+    ctx.beginPath();
+
+    ctx.moveTo(
+        0,
+        canvas.height * 0.68
+    );
+
+    ctx.quadraticCurveTo(
+        canvas.width * 0.25,
+        canvas.height * 0.56,
+        canvas.width * 0.5,
+        canvas.height * 0.68
+    );
+
+    ctx.quadraticCurveTo(
+        canvas.width * 0.76,
+        canvas.height * 0.52,
+        canvas.width,
+        canvas.height * 0.66
+    );
+
+    ctx.lineTo(
+        canvas.width,
+        canvas.height
+    );
+
+    ctx.lineTo(
+        0,
+        canvas.height
+    );
+
+    ctx.closePath();
+
+    ctx.fill();
 
 }
 
@@ -901,30 +1284,38 @@ function drawBackground() {
    WOLKE
    ========================================== */
 
-function drawCloud(x, y, scale) {
+function drawCloud(
+    x,
+    y,
+    scale
+) {
+
+    ctx.fillStyle =
+        "rgba(255,255,255,0.72)";
+
 
     ctx.beginPath();
 
     ctx.arc(
         x,
         y,
-        25 * scale,
+        22 * scale,
         0,
         Math.PI * 2
     );
 
     ctx.arc(
-        x + 25 * scale,
-        y - 10 * scale,
-        32 * scale,
+        x + 24 * scale,
+        y - 12 * scale,
+        30 * scale,
         0,
         Math.PI * 2
     );
 
     ctx.arc(
-        x + 55 * scale,
+        x + 52 * scale,
         y,
-        25 * scale,
+        23 * scale,
         0,
         Math.PI * 2
     );
@@ -938,43 +1329,39 @@ function drawCloud(x, y, scale) {
    HINDERNISSE ZEICHNEN
    ========================================== */
 
-function drawPipes() {
+function drawObstacles() {
 
-    pipes.forEach(pipe => {
+    obstacles.forEach(
+        obstacle => {
 
-        /*
-           obere Karotte / Pflanze
-        */
-
-        drawObstacle(
-            pipe.x,
-            0,
-            pipeWidth,
-            pipe.top
-        );
+            drawLeafObstacle(
+                obstacle.x,
+                0,
+                obstacle.width,
+                obstacle.top
+            );
 
 
-        /*
-           untere Karotte / Pflanze
-        */
+            drawLeafObstacle(
+                obstacle.x,
+                obstacle.bottom,
+                obstacle.width,
+                canvas.height -
+                obstacle.bottom -
+                65
+            );
 
-        drawObstacle(
-            pipe.x,
-            pipe.bottom,
-            pipeWidth,
-            canvas.height - pipe.bottom - 60
-        );
-
-    });
+        }
+    );
 
 }
 
 
 /* ==========================================
-   HINDERNIS
+   GRÜNE HINDERNISSE
    ========================================== */
 
-function drawObstacle(
+function drawLeafObstacle(
     x,
     y,
     width,
@@ -986,11 +1373,8 @@ function drawObstacle(
     }
 
 
-    /*
-       Hauptkörper
-    */
-
-    ctx.fillStyle = "#91b879";
+    ctx.fillStyle =
+        "#7fae6b";
 
     ctx.fillRect(
         x,
@@ -1000,45 +1384,44 @@ function drawObstacle(
     );
 
 
-    /*
-       Rand
-    */
-
-    ctx.fillStyle = "#739b62";
+    ctx.fillStyle =
+        "#659456";
 
     ctx.fillRect(
         x,
         y,
-        8,
+        9,
         height
     );
 
     ctx.fillRect(
-        x + width - 8,
+        x + width - 9,
         y,
-        8,
+        9,
         height
     );
 
 
-    /*
-       Blätter / kleine Details
-    */
+    /* kleine Blätter */
 
-    ctx.fillStyle = "#668e57";
+    ctx.fillStyle =
+        "#527e49";
+
 
     for (
-        let i = 20;
-        i < height;
-        i += 35
+        let yy = y + 18;
+        yy < y + height;
+        yy += 32
     ) {
 
         ctx.beginPath();
 
-        ctx.arc(
-            x + width / 2,
-            y + i,
+        ctx.ellipse(
+            x + width * 0.5,
+            yy,
+            12,
             5,
+            -0.5,
             0,
             Math.PI * 2
         );
@@ -1051,16 +1434,368 @@ function drawObstacle(
 
 
 /* ==========================================
+   KAROTTEN
+   ========================================== */
+
+function drawCarrots() {
+
+    carrots.forEach(
+        carrot => {
+
+            ctx.save();
+
+            ctx.translate(
+                carrot.x,
+                carrot.y
+            );
+
+            ctx.rotate(
+                carrot.rotation
+            );
+
+
+            /* GRÜN */
+
+            ctx.fillStyle =
+                "#5f9d58";
+
+
+            ctx.beginPath();
+
+            ctx.ellipse(
+                -5,
+                -17,
+                4,
+                12,
+                -0.5,
+                0,
+                Math.PI * 2
+            );
+
+            ctx.ellipse(
+                2,
+                -18,
+                4,
+                13,
+                0.1,
+                0,
+                Math.PI * 2
+            );
+
+            ctx.ellipse(
+                8,
+                -15,
+                4,
+                11,
+                0.5,
+                0,
+                Math.PI * 2
+            );
+
+            ctx.fill();
+
+
+            /* KAROTTE */
+
+            ctx.fillStyle =
+                "#ee8758";
+
+
+            ctx.beginPath();
+
+            ctx.moveTo(
+                -11,
+                -10
+            );
+
+            ctx.quadraticCurveTo(
+                0,
+                -3,
+                9,
+                -10
+            );
+
+            ctx.lineTo(
+                2,
+                20
+            );
+
+            ctx.quadraticCurveTo(
+                0,
+                25,
+                -3,
+                20
+            );
+
+            ctx.closePath();
+
+            ctx.fill();
+
+
+            /* kleine Linien */
+
+            ctx.strokeStyle =
+                "#d96e47";
+
+            ctx.lineWidth = 1.5;
+
+
+            ctx.beginPath();
+
+            ctx.moveTo(
+                -6,
+                -4
+            );
+
+            ctx.lineTo(
+                2,
+                -2
+            );
+
+            ctx.moveTo(
+                -5,
+                5
+            );
+
+            ctx.lineTo(
+                2,
+                7
+            );
+
+            ctx.stroke();
+
+
+            ctx.restore();
+
+        }
+    );
+
+}
+
+
+/* ==========================================
+   LUFTSTOSS HINTER BENJI
+   ========================================== */
+
+function drawAirTrail() {
+
+    if (!gameRunning) {
+        return;
+    }
+
+
+    const x =
+        bunny.x - 8;
+
+    const y =
+        bunny.y +
+        bunny.height / 2;
+
+
+    ctx.save();
+
+    ctx.lineCap =
+        "round";
+
+
+    /* große weiche Luft */
+
+    ctx.strokeStyle =
+        "rgba(255,255,255,0.65)";
+
+    ctx.lineWidth = 6;
+
+
+    ctx.beginPath();
+
+    ctx.moveTo(
+        x - 25,
+        y - 17
+    );
+
+    ctx.quadraticCurveTo(
+        x - 48,
+        y - 21,
+        x - 65,
+        y - 13
+    );
+
+    ctx.stroke();
+
+
+    ctx.beginPath();
+
+    ctx.moveTo(
+        x - 22,
+        y + 8
+    );
+
+    ctx.quadraticCurveTo(
+        x - 48,
+        y + 12,
+        x - 62,
+        y + 5
+    );
+
+    ctx.stroke();
+
+
+    /* dünne Linien */
+
+    ctx.strokeStyle =
+        "rgba(255,255,255,0.82)";
+
+    ctx.lineWidth = 2;
+
+
+    ctx.beginPath();
+
+    ctx.moveTo(
+        x - 15,
+        y
+    );
+
+    ctx.lineTo(
+        x - 55,
+        y
+    );
+
+    ctx.moveTo(
+        x - 12,
+        y + 25
+    );
+
+    ctx.lineTo(
+        x - 43,
+        y + 29
+    );
+
+    ctx.stroke();
+
+
+    ctx.restore();
+
+}
+
+
+/* ==========================================
+   BENJI
+   ========================================== */
+
+function drawBunny() {
+
+    const rotation =
+        Math.max(
+            -0.18,
+            Math.min(
+                0.38,
+                bunny.velocity * 0.45
+            )
+        );
+
+
+    ctx.save();
+
+
+    ctx.translate(
+        bunny.x +
+        bunny.width / 2,
+        bunny.y +
+        bunny.height / 2
+    );
+
+
+    ctx.rotate(
+        rotation
+    );
+
+
+    if (
+        benjiImage.complete &&
+        benjiImage.naturalWidth > 0
+    ) {
+
+        ctx.drawImage(
+            benjiImage,
+            -bunny.width / 2,
+            -bunny.height / 2,
+            bunny.width,
+            bunny.height
+        );
+
+    } else {
+
+        ctx.font =
+            "60px serif";
+
+        ctx.textAlign =
+            "center";
+
+        ctx.textBaseline =
+            "middle";
+
+        ctx.fillText(
+            "🐰",
+            0,
+            0
+        );
+
+    }
+
+
+    ctx.restore();
+
+}
+
+
+/* ==========================================
+   PARTIKEL
+   ========================================== */
+
+function drawParticles() {
+
+    particles.forEach(
+        particle => {
+
+            ctx.globalAlpha =
+                particle.life;
+
+            ctx.fillStyle =
+                "#f4b36d";
+
+
+            ctx.beginPath();
+
+            ctx.arc(
+                particle.x,
+                particle.y,
+                particle.size,
+                0,
+                Math.PI * 2
+            );
+
+            ctx.fill();
+
+        }
+    );
+
+
+    ctx.globalAlpha = 1;
+
+}
+
+
+/* ==========================================
    BODEN
    ========================================== */
 
 function drawGround() {
 
-    const groundHeight = 60;
+    const groundHeight = 65;
 
 
     ctx.fillStyle =
-        "#b8d69c";
+        "#a8ce8b";
 
 
     ctx.fillRect(
@@ -1071,12 +1806,10 @@ function drawGround() {
     );
 
 
-    /*
-       kleine Grashalme
-    */
+    /* Gras */
 
     ctx.strokeStyle =
-        "#7ea86b";
+        "#709d5e";
 
     ctx.lineWidth = 2;
 
@@ -1084,19 +1817,22 @@ function drawGround() {
     for (
         let x = 0;
         x < canvas.width;
-        x += 18
+        x += 17
     ) {
 
         ctx.beginPath();
 
         ctx.moveTo(
             x,
-            canvas.height - groundHeight
+            canvas.height -
+            groundHeight
         );
 
         ctx.lineTo(
             x + 5,
-            canvas.height - groundHeight - 7
+            canvas.height -
+            groundHeight -
+            8
         );
 
         ctx.stroke();
@@ -1107,96 +1843,8 @@ function drawGround() {
 
 
 /* ==========================================
-   BENJI ZEICHNEN
+   TOUCH
    ========================================== */
-
-function drawBunny() {
-
-    if (
-        benjiImage.complete &&
-        benjiImage.naturalWidth > 0
-    ) {
-
-        ctx.save();
-
-
-        /*
-           leichte Drehung während des Fallens
-        */
-
-        const rotation =
-            Math.max(
-                -0.25,
-                Math.min(
-                    0.5,
-                    bunny.velocity * 0.5
-                )
-            );
-
-
-        ctx.translate(
-            bunny.x + bunny.width / 2,
-            bunny.y + bunny.height / 2
-        );
-
-        ctx.rotate(rotation);
-
-
-        ctx.drawImage(
-            benjiImage,
-            -bunny.width / 2,
-            -bunny.height / 2,
-            bunny.width,
-            bunny.height
-        );
-
-
-        ctx.restore();
-
-    } else {
-
-        /*
-           Falls das Bild noch lädt:
-           vorübergehend ein Häschen anzeigen
-        */
-
-        ctx.font = "45px serif";
-
-        ctx.fillText(
-            "🐰",
-            bunny.x,
-            bunny.y + 45
-        );
-
-    }
-
-}
-
-
-/* ==========================================
-   STEUERUNG
-   ========================================== */
-
-
-/*
-   Maus
-*/
-
-canvas.addEventListener(
-    "mousedown",
-    function(event) {
-
-        event.preventDefault();
-
-        jump();
-
-    }
-);
-
-
-/*
-   Smartphone / Touch
-*/
 
 canvas.addEventListener(
     "touchstart",
@@ -1213,9 +1861,25 @@ canvas.addEventListener(
 );
 
 
-/*
-   Tastatur
-*/
+/* ==========================================
+   MAUS
+   ========================================== */
+
+canvas.addEventListener(
+    "mousedown",
+    function(event) {
+
+        event.preventDefault();
+
+        jump();
+
+    }
+);
+
+
+/* ==========================================
+   TASTATUR
+   ========================================== */
 
 document.addEventListener(
     "keydown",
@@ -1236,13 +1900,15 @@ document.addEventListener(
 );
 
 
-/*
-   Button
-*/
+/* ==========================================
+   BUTTON
+   ========================================== */
 
 gameButton.addEventListener(
     "click",
-    function() {
+    function(event) {
+
+        event.stopPropagation();
 
         startGame();
 
@@ -1251,17 +1917,10 @@ gameButton.addEventListener(
 
 
 /* ==========================================
-   START
+   ERSTER FRAME
    ========================================== */
 
-message.textContent =
-    "Hilf Benji durch die Hindernisse! 🥕";
-
-finalScore.textContent =
-    "Punkte: 0";
-
-bestScore.textContent =
-    "🏆 Rekord: " + highscore;
+draw();
 
 </script>
 
